@@ -47,15 +47,15 @@ const SocialConnections: React.FC = () => {
   const { openModal } = useModal();
 
   const linkingMap: Record<PlatformId, () => void | Promise<void>> = {
-    twitter: linkTwitter,
-    discord: linkDiscord,
-    spotify: linkSpotify,
+    twitter: () => linkTwitter(),
+    discord: () => linkDiscord(),
+    spotify: () => linkSpotify(),
   };
 
   const unlinkingMap: Record<PlatformId, () => Promise<void>> = {
-    twitter: unlinkTwitter,
-    discord: unlinkDiscord,
-    spotify: unlinkSpotify,
+    twitter: () => unlinkTwitter(),
+    discord: () => unlinkDiscord(),
+    spotify: () => unlinkSpotify(),
   };
 
   const linkedStates = data || {};
