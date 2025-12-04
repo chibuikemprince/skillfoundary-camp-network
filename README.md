@@ -1,224 +1,87 @@
-# SkillFoundry - AI Curriculum & Learning Companion
+# SkillFoundry
 
-**AWS Global Vibe: AI Coding Hackathon 2025**
-SkillFoundry is an agentic AI learning companion that autonomously plans, generates, and adapts a personalized multi-week curriculum based on the learner’s goals, progress, and performance.
+SkillFoundry is an AI-driven learning companion that turns any goal into a structured, multi-week curriculum with lessons, quizzes, resources, and progress tracking. The stack is TypeScript end-to-end (React + Vite on the frontend, Node.js/Express on the backend) with MongoDB for persistence and a pluggable LLM service for content generation.
 
-SkillFoundry is an AI-powered web application that transforms any learning goal into a personalized, structured learning journey. Built with Node.js + TypeScript backend and React frontend, it leverages AI to generate curricula, lessons, quizzes, and resource recommendations.
+## Features
+- AI-generated curricula with weekly plans, lessons, quizzes, and curated resources
+- Personalization by skill, level, time per week, and learning goals
+- Progress dashboard with completion tracking and mastery indicators
+- JWT authentication and protected routes
+- Social connections via Origin SDK (Camp) for verified sharing
 
-## 🚀 Features
+## Tech Stack
+- **Frontend:** React 18, Vite, TypeScript, Tailwind CSS, React Router, TanStack Query
+- **Backend:** Node.js, Express, TypeScript, MongoDB (Mongoose), JWT auth
+- **AI:** Configurable chat-completions API (OpenAI-compatible)
 
-- **AI-Generated Curricula**: Turn any skill into a structured learning path
-- **Personalized Learning**: Adapts to your level, time availability, and goals
-- **Interactive Lessons**: AI-generated content with examples and practice tasks
-- **Smart Quizzes**: Automated quiz generation and grading
-- **Resource Recommendations**: Curated books, courses, articles, and videos
-- **Progress Tracking**: Dashboard with completion metrics and mastery scores
-- **Project Suggestions**: Portfolio-worthy projects for each module
-
-## 🛠 Tech Stack
-
-### Backend
-- **Node.js** with **TypeScript**
-- **Express.js** framework
-- **MongoDB** with Mongoose ODM
-- **JWT** authentication
-- **bcryptjs** for password hashing
-- **AI Integration** (configurable LLM API)
-
-### Frontend
-- **React 18** with **TypeScript**
-- **Vite** for build tooling
-- **Tailwind CSS** for styling
-- **React Router** for navigation
-- **React Query** for state management
-- **React Hook Form** for form handling
-
-## 📋 Prerequisites
-
-- Node.js 18+ and npm
-- MongoDB (local or cloud)
-- AI API key (OpenAI or compatible service)
-
-## 🚀 Quick Start
-
-### 1. Clone and Setup
+## Quick Start
 ```bash
 git clone <repository-url>
 cd SkillFoundry
 ```
 
-### 2. Backend Setup
+### Backend
 ```bash
 cd backend
 npm install
-
-# Copy environment file and configure
-cp .env.example .env
-# Edit .env with your MongoDB URI and AI API key
-
-# Start the backend
-npm run dev
+cp .env.example .env   # set MongoDB URI, JWT secret, AI keys
+npm run dev            # or: npm run build && npm start
 ```
 
-### 3. Frontend Setup
+### Frontend
 ```bash
 cd ../frontend
 npm install
-
-# Start the frontend
-npm run dev
+cp .env.example .env   # set API base URL and Origin client ID if used
+npm run dev            # or: npm run build
 ```
 
-### 4. Access the Application
-- Frontend: http://localhost:3001
-- Backend API: http://localhost:3000
+Default ports: API on `http://localhost:3000`, frontend on `http://localhost:3001`.
 
-## 🔧 Configuration
-
-### Environment Variables (.env)
-```env
+## Environment
+Backend (.env):
+```
 PORT=3000
 MONGODB_URI=mongodb://localhost:27017/skillfoundry
-JWT_SECRET=your-super-secret-jwt-key-here
+JWT_SECRET=change-me
 NODE_ENV=development
-
-# AI Model Configuration
+FRONTEND_URL=http://localhost:3001
 AI_MODEL_API_URL=https://api.openai.com/v1/chat/completions
-AI_MODEL_API_KEY=your-api-key-here
+AI_MODEL_API_KEY=your-key
 AI_MODEL_NAME=gpt-3.5-turbo
 ```
 
-## 📖 User Journey
-
-1. **Registration**: User creates account with learning preferences
-2. **Curriculum Generation**: AI creates personalized learning path
-3. **Weekly Learning**: Structured weekly plans with topics and goals
-4. **Interactive Lessons**: AI-generated content with examples
-5. **Knowledge Checks**: Automated quizzes with instant feedback
-6. **Resource Discovery**: Curated learning materials
-7. **Progress Tracking**: Dashboard showing completion and mastery
-
-## 🏗 Architecture
-
-### Backend Structure
+Frontend (.env):
 ```
-src/
-├── controllers/     # Request handlers
-├── models/         # MongoDB schemas
-├── routes/         # API endpoints
-├── services/       # Business logic
-├── middleware/     # Auth and validation
-├── types/          # TypeScript interfaces
-└── db/            # Database connection
+REACT_APP_API_URL=http://localhost:3000/api
+VITE_ORIGIN_CLIENT_ID=your-origin-client-id   # optional, for Camp/Origin social linking
 ```
 
-### Frontend Structure
+## Project Structure
 ```
-src/
-├── components/     # Reusable UI components
-├── pages/         # Route components
-├── services/      # API calls
-├── types/         # TypeScript interfaces
-├── utils/         # Helper functions
-└── App.tsx        # Main application
+backend/   Express API (controllers, routes, services, models, middleware)
+frontend/  React app (components, pages, services, types, utils)
 ```
 
-## 🔌 API Endpoints
+## API Overview
+- `POST /api/auth/register`, `POST /api/auth/login`
+- `POST /api/curriculum`, `GET /api/curriculum`, `GET /api/curriculum/week/:week`, `GET /api/curriculum/dashboard`
+- `POST /api/lessons/subtopic/:subtopicId/:curriculumId`, `GET /api/lessons/:lessonId`, `GET /api/lessons/:lessonId/quiz`, `POST /api/lessons/quiz/:quizId/submit`
+- `GET /api/resources/topics/:topicId/:curriculumId`, `GET /api/resources/modules/:moduleId/:curriculumId/projects`, `POST /api/resources/:resourceId/complete`, `POST /api/resources/projects/:projectId/complete`, `GET /api/resources/portfolio`
+- `GET /api/social/connections`, `POST /api/social/connect`, `DELETE /api/social/disconnect/:platform`, `POST /api/social/camp-network/verify`
+- `GET /api/health`
 
-### Authentication
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
+## Deployment Notes
+- Build backend: `npm run build` then `npm start`
+- Build frontend: `npm run build` (deploy `dist/` to static hosting)
+- Configure CORS (`FRONTEND_URL`) and production secrets
+- Add monitoring/logging and rate limiting before going live
 
-### Curriculum
-- `POST /api/curriculum` - Generate curriculum
-- `GET /api/curriculum` - Get user's curriculum
-- `GET /api/curriculum/week/:week` - Get weekly plan
-- `GET /api/curriculum/dashboard` - Get progress dashboard
+## Contributing
+1. Fork and create a feature branch
+2. Add or update tests where applicable
+3. Keep TypeScript strict and lint clean
+4. Submit a PR with a concise summary of changes
 
-### Lessons
-- `POST /api/lessons/subtopic/:subtopicId` - Generate lesson
-- `GET /api/lessons/:lessonId` - Get lesson content
-- `GET /api/lessons/:lessonId/quiz` - Get lesson quiz
-- `POST /api/lessons/quiz/:quizId/submit` - Submit quiz answers
-
-### Resources
-- `GET /api/resources/topics/:topicId` - Get topic resources
-- `GET /api/resources/modules/:moduleId/projects` - Get module projects
-- `POST /api/resources/:resourceId/complete` - Mark resource completed
-- `GET /api/resources/portfolio` - Get user portfolio
-
-## 🤖 AI Integration
-
-The system uses a configurable LLM service that can work with:
-- OpenAI GPT models
-- Other compatible chat completion APIs
-- Includes fallback responses for reliability
-
-### AI-Generated Content
-- **Curricula**: Structured learning paths with modules and topics
-- **Lessons**: Detailed explanations with examples and practice tasks
-- **Quizzes**: Multiple-choice questions with explanations
-- **Resources**: Curated recommendations with reasoning
-- **Projects**: Portfolio-worthy project ideas
-
-## 🧪 Development with Amazon Q Developer
-
-This project was built using **Amazon Q Developer** to:
-- Generate TypeScript boilerplate and interfaces
-- Create API endpoints and controllers
-- Design database schemas and models
-- Build React components and pages
-- Implement authentication and routing
-- Generate comprehensive documentation
-
-## 📱 Responsive Design
-
-The application is fully responsive and works on:
-- Desktop computers
-- Tablets
-- Mobile phones
-
-## 🔒 Security Features
-
-- JWT-based authentication
-- Password hashing with bcryptjs
-- Input validation and sanitization
-- CORS protection
-- Environment variable configuration
-
-## 🚀 Deployment
-
-### Backend Deployment
-1. Build the TypeScript code: `npm run build`
-2. Set production environment variables
-3. Deploy to your preferred platform (AWS, Heroku, etc.)
-
-### Frontend Deployment
-1. Build the React app: `npm run build`
-2. Deploy the `dist` folder to a static hosting service
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 🎯 Hackathon Submission
-
-**SkillFoundry** demonstrates:
-- Full-stack TypeScript development
-- AI integration for content generation
-- Modern React patterns and hooks
-- RESTful API design
-- Database modeling and relationships
-- User authentication and authorization
-- Responsive web design
-- Comprehensive documentation
-
-Built for the **AWS Global Vibe: AI Coding Hackathon 2025** to showcase how AI can revolutionize personalized learning experiences.
+## License
+MIT
