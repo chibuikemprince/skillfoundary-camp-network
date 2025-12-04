@@ -9,6 +9,13 @@ import {
 
 type PlatformId = 'twitter' | 'discord' | 'spotify';
 
+const envVars = import.meta.env as Record<string, string | undefined>;
+const originClientId =
+  envVars.VITE_ORIGIN_CLIENT_ID ||
+  envVars.REACT_APP_ORIGIN_CLIENT_ID ||
+  '';
+const originConfigured = Boolean(originClientId && originClientId !== 'camp-demo-client-id');
+
 const PLATFORM_COPY: Record<
   PlatformId,
   { label: string; blurb: string; cta: string; unlinkCta: string }
@@ -46,6 +53,14 @@ const SocialConnections: React.FC = () => {
   } = useLinkSocials();
   const { openModal } = useModal();
 
+  const handleOpenCamp = () => {
+    if (!originConfigured) {
+      alert('Origin SDK client ID missing. Set VITE_ORIGIN_CLIENT_ID (or REACT_APP_ORIGIN_CLIENT_ID) in the frontend env.');
+      return;
+    }
+    openModal();
+  };
+
   const linkingMap: Record<PlatformId, () => void | Promise<void>> = {
     twitter: () => linkTwitter(),
     discord: () => linkDiscord(),
@@ -78,8 +93,9 @@ const SocialConnections: React.FC = () => {
             <h3 className="text-lg font-medium text-gray-900">Social Connections</h3>
           </div>
           <button
-            onClick={openModal}
-            className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-primary-600 bg-primary-100 hover:bg-primary-200"
+            onClick={handleOpenCamp}
+            className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-primary-600 bg-primary-100 hover:bg-primary-200 disabled:opacity-60"
+            disabled={!originConfigured}
           >
             Manage in Camp
           </button>
@@ -94,8 +110,9 @@ const SocialConnections: React.FC = () => {
             </p>
             <div className="flex gap-2 mt-2">
               <button
-                onClick={openModal}
-                className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                onClick={handleOpenCamp}
+                className="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-60"
+                disabled={!originConfigured}
               >
                 Open Camp Connect
               </button>
@@ -160,6 +177,12 @@ const SocialConnections: React.FC = () => {
         {error && (
           <p className="text-xs text-red-600 mt-3">
             Unable to load Camp social links. Try reopening Camp Connect.
+          </p>
+        )}
+        {!originConfigured && (
+          <p className="text-xs text-amber-700 mt-3 bg-amber-50 border border-amber-200 rounded px-3 py-2">
+            Origin SDK client ID not set. Add VITE_ORIGIN_CLIENT_ID (or REACT_APP_ORIGIN_CLIENT_ID) to your frontend
+            environment so the Camp modal can initialize.
           </p>
         )}
       </div>

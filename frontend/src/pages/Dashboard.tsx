@@ -87,6 +87,11 @@ const Dashboard: React.FC = () => {
             Track your progress in {curriculum.skill}
           </p>
         </div>
+        {curriculum.weeklyRoadmap?.length === 0 && (
+          <div className="p-3 rounded-md border border-amber-200 bg-amber-50 text-amber-800 text-sm">
+            Generate your weekly plan to unlock social connections and Origin linking.
+          </div>
+        )}
 
         {/* Progress Overview */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -248,7 +253,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Social Connections */}
-        <SocialConnections />
+        {curriculum.weeklyRoadmap?.length ? <SocialConnections /> : null}
 
         {/* Curriculum Overview */}
         <div className="bg-white shadow rounded-lg">
